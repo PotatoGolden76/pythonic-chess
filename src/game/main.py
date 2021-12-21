@@ -14,7 +14,10 @@ class Game:
         self.start_fen = temp_fen[1:len(temp_fen)-1]  # more real cursed stuff
         self._b = Board(self.start_fen)
 
-        if mode != "console":
+        temp_mode = self.lines[1].split(" ")[2].strip()  # real cursed stuff
+        self.mode = temp_mode[1:len(temp_mode) - 1]  # more real cursed stuff
+
+        if self.mode != "console":
             self._ui = GUI(self._b)
         else :
             self._ui = ConsoleUI(self._b)

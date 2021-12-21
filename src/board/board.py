@@ -5,9 +5,12 @@ class Board:
     def __init__(self, initial_fen):
         self._whitePieces = []
         self._blackPieces = []
-        self._sideToMove = 0  # 0 - White / 1 - Black
+        self._sideToMove = 1  # 1 - White / 0 - Black
 
         self.fen = initial_fen
+
+        self._ongoing = True
+        self._winner = None
 
     @property
     def fen(self):
@@ -82,9 +85,9 @@ class Board:
                     file_cursor += 1
 
         if fields[1] == "w":
-            self._sideToMove = 0
-        else:
             self._sideToMove = 1
+        else:
+            self._sideToMove = 0
 
         # TODO: parse castling rights
 
@@ -95,7 +98,59 @@ class Board:
             y = ['.', '.', '.', '.', '.', '.', '.', '.']
             mat.append(y)
         for piece in self._whitePieces:
-            mat[piece.rank][piece.file] = piece.pieceCode.upper()
+            if not piece.taken:
+                mat[piece.rank][piece.file] = piece.pieceCode.upper()
         for piece in self._blackPieces:
-            mat[piece.rank][piece.file] = piece.pieceCode.lower()
+            if not piece.taken:
+                mat[piece.rank][piece.file] = piece.pieceCode.lower()
         return mat
+
+    @property
+    def ongoing(self):
+        return self._ongoing
+
+    @property
+    def winner(self):
+        return self._winner
+
+    @property
+    def side_to_move(self):
+        return self._sideToMove
+
+    def get_piece(self, rank, file):
+        for i in self._whitePieces:
+            if i.rank == rank and i.file == file and not i.taken:
+                return i
+
+        for i in self._blackPieces:
+            if i.rank == rank and i.file == file and not i.taken:
+                return i
+
+        return None
+
+    def has_piece(self, rank, file):
+        for i in self._whitePieces:
+            if i.rank == rank and i.file == file and not i.taken:
+                return True
+
+        for i in self._blackPieces:
+            if i.rank == rank and i.file == file and not i.taken:
+                return True
+
+        return False
+
+    def selected_board(self, rank, file):
+        piece = self.get_piece(rank, file)
+        mat = self.matrix_board
+        moves = piece.generate_moves(self)
+
+        for m in moves:
+            mat[m[0]][m[1]] = "*"
+
+        return mat
+
+    def do_turn(self):
+        if self._sideToMove:
+            self._sideToMove = 0
+        else:
+            self._sideToMove = 1

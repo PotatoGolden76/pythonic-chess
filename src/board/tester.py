@@ -6,10 +6,10 @@ from src.board.board import Board
 class TestBoard(unittest.TestCase):
     def test_board_constructor(self):
         b = Board("8/rbknpq2/8/8/8/8/RBKNPQ2/8 w KQkq")
-        self.assertEqual(b._sideToMove, 0)
+        self.assertEqual(b._sideToMove, 1)
 
         b = Board("8/rbknpq2/8/8/8/8/RBKNPQ2/8 b KQkq")
-        self.assertEqual(b._sideToMove, 1)
+        self.assertEqual(b._sideToMove, 0)
 
         ls = [Rook, Bishop, King, Knight, Pawn, Queen]
         for i in b._whitePieces:

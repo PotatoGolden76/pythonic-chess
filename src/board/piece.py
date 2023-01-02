@@ -26,6 +26,23 @@ class Piece:
             return False
         return True
 
+    def validate_move(self, move, board):
+        board_cpy = board.copy
+        board_cpy.get_piece(self.rank, self.file).move(move, board_cpy)
+        enemy_moves = []
+        enemy = board_cpy.white
+        if self.isWhite:
+            enemy = board_cpy.black
+
+        for p in enemy:
+            enemy_moves.extend(p.generate_moves(board_cpy))
+
+        for m in enemy_moves:
+            if board_cpy.get_piece(m[0], m[1]) is not None and board_cpy.get_piece(m[0], m[1]).pieceCode == 'k':
+                return False
+
+        return True
+
 
 class Rook(Piece):
     def __init__(self, x, y, white):
@@ -53,6 +70,7 @@ class Rook(Piece):
                 if not (board.get_piece(y, x).isWhite == self.isWhite):
                     moves.append((y, x))
 
+        moves = [m for m in moves if self.validate_move(m, board)] if self.isWhite == board.side_to_move else moves
         return moves
 
 
@@ -81,7 +99,7 @@ class Bishop(Piece):
             if board.has_piece(y, x):
                 if not (board.get_piece(y, x).isWhite == self.isWhite):
                     moves.append((y, x))
-
+        moves = [m for m in moves if self.validate_move(m, board)] if self.isWhite == board.side_to_move else moves
         return moves
 
 
@@ -114,7 +132,7 @@ class Queen(Piece):
             if board.has_piece(y, x):
                 if not (board.get_piece(y, x).isWhite == self.isWhite):
                     moves.append((y, x))
-
+        moves = [m for m in moves if self.validate_move(m, board)] if self.isWhite == board.side_to_move else moves
         return moves
 
 
@@ -145,7 +163,7 @@ class King(Piece):
             if board.has_piece(y, x):
                 if not (board.get_piece(y, x).isWhite == self.isWhite):
                     moves.append((y, x))
-
+        moves = [m for m in moves if self.validate_move(m, board)] if self.isWhite == board.side_to_move else moves
         return moves
 
 
@@ -177,6 +195,10 @@ class Knight(Piece):
                 if not (board.get_piece(y, x).isWhite == self.isWhite):
                     moves.append((y, x))
 
+        print("pre ", moves)
+        moves = [m for m in moves if self.validate_move(m, board)] if self.isWhite == board.side_to_move else moves
+        print("post ", moves)
+        print()
         return moves
 
 
@@ -240,5 +262,5 @@ class Pawn(Piece):
                 y = self.rank - 2
                 if not board.has_piece(y, x):
                     moves.append((y, x))
-
+        moves = [m for m in moves if self.validate_move(m, board)] if self.isWhite == board.side_to_move else moves
         return moves

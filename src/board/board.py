@@ -13,6 +13,18 @@ class Board:
         self._winner = None
 
     @property
+    def black(self):
+        return self._blackPieces
+
+    @property
+    def white(self):
+        return self._whitePieces
+
+    @property
+    def copy(self):
+        return Board(self.fen)
+
+    @property
     def fen(self):
         fen_string = ""
         for rank in self.matrix_board:
@@ -32,6 +44,11 @@ class Board:
         # TODO: add support for side-to-move, castling and possibly full FEN notation
 
         fen_string = fen_string[:-1]
+        fen_string += " "
+        if self._sideToMove:
+            fen_string += "w"
+        else:
+            fen_string += "b"
         return fen_string
 
     @fen.setter
